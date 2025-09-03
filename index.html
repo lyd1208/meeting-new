@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>秒议会议助手</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<!-- 导航栏 -->
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="55.png" alt="Logo" class="logo-icon">
+        <span class="logo-text">秒议</span>
+    </div>
+    <div class="nav-center">
+        <button class="nav-link active" data-page="meeting">会议助手</button>
+        <button class="nav-link" data-page="more">更多功能</button>
+    </div>
+    <div class="nav-right">
+        <button id="userBtn" class="user-btn">
+            <div class="default-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+            </div>
+            <img id="navbarAvatar" src="" alt="用户头像" style="display: none; width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+            <span id="navbarNickname" style="display: none; font-size: 14px; font-weight: 500;"></span>
+        </button>
+        <span id="navbarUserNickname" style="margin-left: 10px; font-size: 16px; font-weight: 500; color: #1d1d1f; display: none;"></span>
+    </div>
+</nav>
+
+<!-- 时钟 -->
+<div id="clock" class="flip-clock"></div>
+
+<body>
+    <div id="splashScreen" class="splash-screen">
+        <img src="55.png" alt="启动图片" class="splash-image">
+        </div>
+
+    <div id="mainContent" class="content-container">
+    <div class="container">
+        <div class="header">
+            <h1>秒议会议助手</h1>
+            <p>支持实时录音和音频文件识别</p>
+        </div>
+        
+        <div class="input-container">
+            <div class="tab-buttons">
+                <button id="micTab" class="tab-button active">实时录音</button>
+                <button id="fileTab" class="tab-button">音频文件</button>
+            </div>
+            
+            <div id="micSection" class="input-section active">
+                <div class="microphone-container">
+                    <button id="micButton" class="mic-button">
+                        <svg class="mic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/>
+                            <path d="M19 10v1a7 7 0 0 1-14 0v-1"/>
+                            <line x1="12" y1="19" x2="12" y2="23"/>
+                            <line x1="8" y1="23" x2="16" y2="23"/>
+                        </svg>
+                    </button>
+                    <div class="status-text" id="statusText">点击开始录音</div>
+                </div>
+            </div>
+            
+            <div id="fileSection" class="input-section">
+                <div class="file-upload-container">
+                    <div class="upload-area" id="uploadArea">
+                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,5 17,10"/>
+                            <line x1="12" y1="5" x2="12" y2="15"/>
+                        </svg>
+                        <div class="upload-text">
+                            <div class="upload-title">选择音频文件</div>
+                            <div class="upload-subtitle">支持 MP3, WAV, M4A 格式</div>
+                        </div>
+                        <input type="file" id="audioFile" accept="audio/*" style="display: none;">
+                    </div>
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <div class="file-name" id="fileName"></div>
+                        <button id="processButton" class="process-button">开始识别</button>
+                    </div>
+                    <div class="progress-container" id="progressContainer" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progressFill"></div>
+                        </div>
+                        <div class="progress-text" id="progressText">处理中...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result-container">
+            <div class="result-header">
+                <h3>转换结果</h3>
+                <button id="clearButton" class="clear-button">清空</button>
+            </div>
+            <textarea class="result-text" id="resultText" placeholder="转换的文字将显示在这里...">
+            </textarea>
+        </div>
+        
+        <div class="controls">
+            <button id="copyButton" class="control-button" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                </svg>
+                复制文本
+            </button>
+            <button id="aiSummaryButton" class="control-button ai-button" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M12 1v6m0 6v6m11-7h-6m-6 0H1"/>
+                </svg>
+                AI总结
+            </button>
+            <button id="downloadButton" class="control-button" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7,10 12,15 17,10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                下载Word
+            </button>
+        </div>
+        
+        <!-- AI总结区域 -->
+        <div class="ai-section" id="aiSection" style="display: none;">
+            <div class="ai-header">
+                <h3>🤖 AI智能总结</h3>
+            </div>
+            <div class="ai-result" id="aiResult">
+                <div class="ai-placeholder">AI正在分析内容，请稍候...</div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+        <!-- 更多功能内容 -->
+<div id="moreContent" class="content-container hidden">
+    <div class="container">
+        <h2>更多功能</h2>
+        
+        <!-- 待办列表部分 -->
+        <div class="todo-container">
+            <h3>📝 待办列表</h3>
+            <div class="todo-input-area">
+                <input type="text" id="todoInput" class="todo-input" placeholder="添加新的待办事项...">
+                <input type="datetime-local" id="todoDateTime" class="todo-datetime">
+                <button id="addTodoBtn" class="todo-add-btn">添加</button>
+            </div>
+            <ul id="todoList" class="todo-list"></ul>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 用户设置部分 -->
+        <div class="todo-container settings-container">
+            <h3>👤 用户设置</h3>
+            <div class="settings-form">
+                <div class="form-group">
+                    <label>昵称 (3-8个字符)</label>
+                    <input type="text" id="userNickname" class="settings-input" placeholder="请输入昵称" maxlength="8">
+                    <div class="char-count" id="nicknameCount">0/8</div>
+                </div>
+        
+                <div class="form-group">
+                    <label>性别</label>
+                    <div class="gender-options">
+                        <label class="gender-option">
+                            <input type="radio" name="userGender" value="male">
+                            <span>男</span>
+                        </label>
+                        <label class="gender-option">
+                            <input type="radio" name="userGender" value="female">
+                            <span>女</span>
+                        </label>
+                        <label class="gender-option">
+                            <input type="radio" name="userGender" value="secret">
+                            <span>保密</span>
+                        </label>
+                    </div>
+                </div>
+        
+                <div class="form-group">
+                    <label>头像选择</label>
+                    <div class="avatar-options">
+                        <div class="avatar-option" data-avatar="t1.png">
+                            <img src="t1.png" alt="头像1">
+                        </div>
+                        <div class="avatar-option" data-avatar="t2.png">
+                            <img src="t2.png" alt="头像2">
+                        </div>
+                        <div class="avatar-option" data-avatar="t3.png">
+                            <img src="t3.png" alt="头像3">
+                        </div>
+                        <div class="avatar-option" data-avatar="t4.png">
+                            <img src="t4.png" alt="头像4">
+                        </div>
+                        <div class="avatar-option" data-avatar="t5.png">
+                            <img src="t5.png" alt="头像5">
+                        </div>
+                        <div class="avatar-option" data-avatar="t6.png">
+                            <img src="t6.png" alt="头像6">
+                        </div>
+                    </div>
+                </div>
+                <button id="saveSettings" class="save-settings-btn">保存设置</button>
+            </div>
+        </div>
+    </div>
+</div>   
+        
+    <!-- 登录弹窗 -->
+<div id="loginModal" class="login-modal">
+    <div class="login-box">
+        <div class="login-header">
+            <h3>用户登录</h3>
+            <button class="login-close-btn" id="closeLoginModal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <form class="login-form" id="loginForm">
+            <div class="form-group">
+                <input type="text" id="username" class="login-input" placeholder="用户名" required autocomplete="username">
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" class="login-input" placeholder="密码" required autocomplete="current-password">
+            </div>
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="rememberMe" class="remember-checkbox">
+                <label for="rememberMe" class="remember-label">记住我</label>
+            </div>
+            <button type="submit" class="login-button">登录</button>
+        </form>
+    </div>
+</div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
